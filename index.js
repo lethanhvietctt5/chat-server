@@ -6,63 +6,72 @@ const io = require("socket.io")(server, {
     origin: "*",
   },
 });
-const { v4 } = require("uuid");
 
+let rooms = [];
 let users = [];
 
-function join({ id, name }) {
-  const user = { id, name };
-  users.push(user);
-  return users;
-}
-
-function getUser(id) {
-  return users.find((user) => user.id === id);
-}
-
-function leave(id) {
-  const index = users.findIndex((user) => user.id === id);
-  if (index !== -1) return users.splice(index, 1)[0];
-  return null;
-}
-
-const room_id = v4();
-
-// User connect to Socket.IO Server
 io.on("connection", (socket) => {
-  // User join to room
-  socket.on("join", ({ name }) => {
-    users = join({ id: socket.id, name });
+  //
+  // TODO: Check for empty rooms
+  for (let i = 0; i < rooms.length; i++) {
+    if (
+      io.sockets.adapter.rooms[rooms[i]] &&
+      io.sockets.adapter.rooms[rooms[i]].length == 0
+    ) {
+      rooms.filter((room) => room !== rooms[i]);
+      i--;
+    }
+  }
 
-    socket.join(room_id);
-    console.log(name, socket.id);
+  // TODO: Send list of available rooms to new client
+  io.to(socket.id).emit("rooms", rooms);
 
-    // Send notification to other users
-    socket.to(room_id).emit("message", {
+  // TODO: User join to room
+  socket.on("join", ({ roomID, name }) => {
+    if (roomID && rooms.indexOf(roomID) === -1) {
+      rooms.push(roomID);
+    }
+
+    socket.join(roomID);
+    users.push({ id: socket.id, name });
+
+    // TODO: Send notification to other users
+    socket.to(roomID).emit("message", {
       id: socket.id,
       name: name,
       message: `${name} has joined room chat`,
+      isNewUser: true,
     });
   });
 
-  // User send message to room
-  socket.on("send_message", ({ id, message }) => {
-    const name = users.find((user) => user.id === id);
+  // TODO: User send message to room
+  socket.on("send_message", ({ room_id, message }) => {
+    const name = users.find((user) => user.id === socket.id);
     io.to(room_id).emit("message", { id, name, message });
   });
 
-  // User disconnect to Socket.IO Server
+  // TODO: User send message to others
+  socket.on("invidial_message", ({ message, id_reciever }) => {
+    io.to(id_reciever).emit("message", {
+      id: socket.id,
+      name: users.find((user) => user.id === socket.id).name,
+      message,
+    });
+  });
+
+  // TODO: User disconnect to Socket.IO Server
   socket.on("disconnect", () => {
-    const user = leave(socket.id);
-    if (user) {
+    if (users.find((user) => user.id === socket.id).length > 0) {
       // Send notification to other users
       socket.broadcast.to(room_id).emit("message", {
         id: null,
         name: null,
+        isLeave: true,
         message: `${user.name} has joined room chat`,
       });
-    }
 
+      users = users.filter((user) => user.id !== socket.id);
+    }
     if (socket.client.conn.server.clientsCount == 0) users = [];
   });
 });

@@ -1,4 +1,4 @@
-const EVENTS = require("../event");
+const EVENTS = require("../list_events");
 
 function invidual_message(io, socket, rooms, users) {
   socket.on(EVENTS.send_invidual_message, ({ message, id_reciever }) => {

@@ -1,4 +1,4 @@
-const EVENTS = require("../event");
+const EVENTS = require("../list_events");
 
 function join_app(io, socket, rooms, users) {
   socket.on(EVENTS.join_app, ({ name }) => {

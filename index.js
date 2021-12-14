@@ -22,7 +22,7 @@ io.on(EVENTS.connection, (socket) => {
   for (let i = 0; i < rooms.length; i++) {
     if (
       io.sockets.adapter.rooms[rooms[i]] &&
-      io.sockets.adapter.rooms[rooms[i]].length == 0
+      io.sockets.adapter.rooms[rooms[i]].length === 0
     ) {
       rooms.filter((room) => room !== rooms[i]);
       i--;

@@ -3,11 +3,11 @@ const EVENTS = require("../list_events");
 function disconnect(io, socket, rooms, users) {
   let new_users = [];
   socket.on(EVENTS.disconnect, () => {
-    let user = users.find((user) => user.id === socket.id);
+    const user = users.find((each_user) => each_user.id === socket.id);
     if (user) {
-      users = users.filter((user) => user.id !== socket.id);
+      users = users.filter((each_user) => each_user.id !== socket.id);
     }
-    if (socket.client.conn.server.clientsCount == 0) users = [];
+    if (socket.client.conn.server.clientsCount === 0) users = [];
 
     new_users = users;
   });

@@ -12,24 +12,24 @@ function join_room(io, socket, rooms, users) {
 
     socket.to(roomID).emit(EVENTS.recieve_message, {
       id: socket.id,
-      name: name,
+      name,
       message: `${name} has joined room chat`,
       isNewUser: true,
     });
 
-    socket.on(EVENTS.disconnect, function () {
+    socket.on(EVENTS.disconnect, () => {
       socket.to(roomID).emit(EVENTS.recieve_message, {
         id: socket.id,
-        name: name,
+        name,
         message: `${name} has left room chat`,
         isNewUser: false,
       });
 
-      let user = users.find((user) => user.id === socket.id);
+      const user = users.find((each_user) => each_user.id === socket.id);
       if (user) {
-        users = users.filter((user) => user.id !== socket.id);
+        users = users.filter((each_user) => each_user.id !== socket.id);
       }
-      if (socket.client.conn.server.clientsCount == 0) users = [];
+      if (socket.client.conn.server.clientsCount === 0) users = [];
       io.emit(EVENTS.list_members, users);
       io.emit(EVENTS.list_rooms, rooms);
     });

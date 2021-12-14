@@ -3,5 +3,10 @@
     "express": "^4.17.1",
     "socket.io": "^4.2.0",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.4.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3"
   }
 }

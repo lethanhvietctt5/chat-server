@@ -19,16 +19,6 @@ var rooms = [];
 var users = [];
 
 io.on(EVENTS.connection, (socket) => {
-  for (let i = 0; i < rooms.length; i++) {
-    if (
-      io.sockets.adapter.rooms[rooms[i]] &&
-      io.sockets.adapter.rooms[rooms[i]].length === 0
-    ) {
-      rooms.filter((room) => room !== rooms[i]);
-      i--;
-    }
-  }
-
   join_app(io, socket, rooms, users);
 
   join_room(io, socket, rooms, users);

@@ -1,7 +1,8 @@
+const { clear_room } = require("../clear_room");
 const EVENTS = require("../list_events");
 
 function leave_room(io, socket, rooms, users) {
-  socket.on(EVENTS.leave_room, ({ room_id }) => {
+  socket.on(EVENTS.leave_room, async ({ room_id }) => {
     if (room_id && rooms.indexOf(room_id) !== -1) {
       socket.leave(room_id);
       const { name } = users.find((user) => user.id === socket.id);
@@ -11,6 +12,8 @@ function leave_room(io, socket, rooms, users) {
         message: `${name} left the room`,
         isLeave: true,
       });
+
+      clear_room(io, rooms, users);
     }
   });
 }

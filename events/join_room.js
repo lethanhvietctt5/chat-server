@@ -22,7 +22,7 @@ function join_room(io, socket, rooms, users) {
         id: socket.id,
         name,
         message: `${name} has left room chat`,
-        isNewUser: false,
+        isLeave: true,
       });
 
       const user = users.find((each_user) => each_user.id === socket.id);

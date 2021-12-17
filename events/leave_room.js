@@ -9,7 +9,7 @@ function leave_room(io, socket, rooms, users) {
       io.to(room_id).emit(EVENTS.recieve_message, {
         id: socket.id,
         name,
-        message: `${name} left the room`,
+        message: `${name} has left the room`,
         isLeave: true,
       });
 

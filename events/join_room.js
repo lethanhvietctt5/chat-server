@@ -21,7 +21,7 @@ function join_room(io, socket, rooms, users) {
       socket.to(roomID).emit(EVENTS.recieve_message, {
         id: socket.id,
         name,
-        message: `${name} has left room chat`,
+        message: `${name} has left the room`,
         isLeave: true,
       });
 
